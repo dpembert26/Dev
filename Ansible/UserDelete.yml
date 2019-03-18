@@ -1,0 +1,10 @@
+---
+- hosts: centos
+  remote_user: xxxxxxxxx
+  become: yes
+  tasks:
+  - name: Remove the user 'xxxxxxxxx'
+    user:
+      name: xxxxxxxxxx
+      state: absent
+      remove: yes
