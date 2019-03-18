@@ -1,0 +1,11 @@
+---
+- hosts: prod-redhat
+  remote_user: xxxxx@xxxxxxx.xxxx.xxx
+  become: yes
+  tasks:
+    - name: add user to sudoers file
+      lineinfile:
+        path: /etc/sudoers
+        line: 'xxxxxx@xxxxxx.xxxxxx.xxxx ALL=(ALL) NOPASSWD: ALL'
+        backup: yes
+        state: present
