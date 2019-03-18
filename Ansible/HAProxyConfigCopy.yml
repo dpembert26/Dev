@@ -1,0 +1,13 @@
+---
+- hosts: haproxy
+  remote_user: xxxxxx@xxxxx.xxxx.xxx
+  become: yes
+  tasks:
+  - name: copy haproxy.conf to xxxxx, xxxxx, xxxxx
+    template:
+      src: "/Users/xxxxxxxxx/Documents/Ansible Playbooks/haproxy.conf"
+      dest: /etc/haproxy/haproxy.conf
+  - name: check config
+    command: /usr/local/sbin/haproxy -c -f /etc/haproxy/haproxy.conf
+    register: configcheck
+- debug: var=configcheck.stdout_lines
