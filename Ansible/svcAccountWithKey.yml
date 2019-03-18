@@ -1,0 +1,47 @@
+---
+- hosts: linux # Server list will be modified
+  remote_user: dxxxxxxxxxx
+  become: yes
+  tasks:
+  - name: Get users file
+    include_vars: users.yml
+  - name: Check if user exist  
+    shell: cat  /etc/passwd | grep {{ item }} | sed -r 's/(\w+):.+/\1/' 
+    register: contents
+    with_items:  "{{ users }}"
+  - name:  Create  users on all CentOS/Redhat servers
+    vars:
+      hash_passwd: 'xxxxxxxxxxxxxx'
+      hostname: 'abcdefghijklmnopqrstuvwxyz'
+    user: name={{ item }}  home="/home/{{ item }} " update_password=on_create  password="{{ hash_passwd|password_hash('sha512', 65534|random(seed=hostname)|string) }}"
+    when: contents.stdout is undefined
+    with_items: "{{ users }}"
+  - name: add user to sudoers file
+    lineinfile:
+      path: /etc/sudoers
+      line: '{{ item }} ALL=(ALL) NOPASSWD: ALL'
+      backup: yes
+      state: absent
+    with_items: "{{ users }}"
+  - name: Change password expire to never
+    shell: sudo  chage -M -1 {{ item }}
+  - name:  Create ssh directory
+    file:
+      path: /home/xxxx-xxxxxx/.ssh
+      state: directory
+      owner: xxx-xxxxxx
+      group: xxx-xxxxx
+      mode: 0700 
+  - name: Create authorized_keys    
+    copy: 
+      content: ""
+      dest: /home/xxxx-xxxxxx/.ssh/authorized_keys
+      force: no
+      owner: xxx-xxxxxx
+      group: xxx-xxxxx
+      mode: 0644
+  - name: Add the public key to authorized_keys
+    authorized_key: 
+      user: xxxxxx-xxxxx
+      state: present
+      key: "{{ lookup('file', '/opt/rundeck/projects/Ansible/authorized_keys') }}"
