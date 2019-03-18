@@ -1,0 +1,54 @@
+---
+- hosts: haproxy
+  remote_user: xxxxxx@xxxxxxxx.xxxx.xxx
+  become: yes
+  tasks:
+  - name: remove the existing MSASR directory if it exists
+    file:
+      path: /root/MSASR
+      state: absent
+  - name: make MSASR directory
+    file:
+      path: /root/MSASR
+      state: directory
+      mode: 0755
+  - name: download and unarchive ASR client
+    unarchive:
+      src: https://xxxxxx-xxxxxx.xxxxxx-xxxxxxxxx.xxxx/technology/Microsoft-ASR_UA_9.16.0.0_RHEL7-64_GA_23Apr2018_Release.tar.gz
+      dest: /root/MSASR/
+      remote_src: yes
+  - name: create passphrase file
+    lineinfile:
+      path: /root/MSASR/passphrase.txt
+      line: 'xxxxxxxxxxxxxxxxx'
+      create: yes
+      state: present
+  - name: run install script
+    expect:
+      chdir: /root/MSASR
+      command: /usr/bin/bash install
+      responses:
+        "Do you want to upgrade": "yes"
+      timeout: 300
+    failed_when: result.rc != 209
+    register: result
+    notify:
+      - restart vxagent
+      - restart svagent
+  - name: ensure vx agent is running
+    service:
+      name: vxagent
+      state: started
+  - name: ensure sv agent is running
+    service:
+      name: svagent
+      state: started
+  handlers:
+    - name: restart vxagent
+      service:
+        name: vxagent
+        state: restarted
+    - name: restart svagent
+      service:
+        name: svagent
+        state: restarted
