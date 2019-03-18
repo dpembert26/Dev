@@ -1,0 +1,13 @@
+---
+- hosts: haproxy
+  remote_user: xxxxxxx@xxxxxxx.xxxxx.xxx
+  become: yes
+  tasks:
+  - name: copy haproxy.conf to xxxxx, xxxxxx, xxxxx
+    template:
+      src: /Users/xxxxxxxxxxxxxxxx/Documents/HAProxy/haproxy-git/haproxy.conf
+      dest: /etc/haproxy/haproxy.conf
+  - name: check config
+    command: /usr/local/sbin/haproxy -c -f /etc/haproxy/haproxy.conf
+    register: configcheck
+  - debug: var=configcheck.stdout_lines
