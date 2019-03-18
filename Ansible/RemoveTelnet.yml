@@ -1,0 +1,9 @@
+---
+- hosts: redhat
+  remote_user: xxxxxxxx@xxxxxxx.xxxxx.xxx
+  become: yes
+  tasks:
+  - name: uninstall telnet
+    yum:
+      name: telnet
+      state: absent
