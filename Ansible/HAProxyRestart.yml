@@ -1,0 +1,13 @@
+---
+- hosts: haproxy
+  remote_user: xxxxxx@xxxxxx.xxxxx.xxx
+  become: yes
+  tasks:
+    - name: restart haproxy
+      service:
+        name: haproxy
+        state: restarted
+    - name: check haproxy
+      command: systemctl status haproxy
+      register: hapstatus
+- debug: var=hapstatus.stdout_lines
