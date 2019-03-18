@@ -1,0 +1,19 @@
+---
+- hosts: prod-centos
+  remote_user: xxxxxxxxxxxx
+  become: yes
+  tasks:
+  - name: install cifs-utils if not already installed
+    yum:
+      name: cifs-utils
+      state: present
+  - name: mount ASR_Repository
+    mount:
+      path: /mnt/ASR_Repository
+      src: //xx.xx.xx.xxx/ASR_Repository
+      state: mounted
+      fstype: cifs
+      opts:
+        username: xxxxxxxx
+        password: xxxxxxxx
+        
