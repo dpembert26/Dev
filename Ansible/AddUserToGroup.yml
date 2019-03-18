@@ -1,0 +1,10 @@
+---
+- hosts: docker
+  remote_user: xxxxxxxxx
+  become: yes
+  tasks:
+    - user:
+        name: xxxxxxxxxxx
+        shell: /bin/bash
+        groups: wheel
+        append: yes
